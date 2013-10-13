@@ -13,11 +13,15 @@
   Widget.prototype.render = function () {
     var fragment = document.createDocumentFragment(),
       table = document.createElement('table'),
+      hover = document.createElement('div'),
       tbody = document.createElement('tbody');
 
+    hover.className = 'hover';
+    table.appendChild(hover);
+    this.hover = hover;
 
     table.appendChild(tbody);
-    table.className = 'table table-striped table-bordered table-hover table-condensed';
+    table.className = 'table table-striped table-hover table-condensed'; // table-bordered
     this._renderHeader(tbody);
 
     var fr = document.createDocumentFragment();
@@ -43,12 +47,10 @@
   Widget.prototype._renderHeader = function (tbody) {
 
     var tr = document.createElement('tr'),
-      hover = document.createElement('div'),
       nameTh = document.createElement('th'),
       sizeTh = document.createElement('th'),
       dateTh = document.createElement('th');
 
-    hover.className = 'hover';
     nameTh.innerHTML = 'Name';
     sizeTh.innerHTML = 'Size';
     dateTh.innerHTML = 'Date Modified';
@@ -56,10 +58,7 @@
     tr.appendChild(nameTh);
     tr.appendChild(sizeTh);
     tr.appendChild(dateTh);
-    nameTh.appendChild(hover);
-    this.hover = hover;
     tbody.appendChild(tr);
-
   };
 
   Widget.prototype._renderFooter = function (tbody) {
@@ -75,7 +74,7 @@
     input.setAttribute('type', 'file');
     input.style.display = 'none';
 
-    tr.addEventListener('click', this._clickFooterEvent().bind(this), false);
+    tr.addEventListener('click', this._clickFooterEvent.bind(this), false);
     input.addEventListener('change', this._inputFileEvent.bind(this), false);
 
     tr.appendChild(input);
@@ -88,16 +87,18 @@
     this.hover.style.display = 'none';
     var dt = e.dataTransfer,
       data = dt.getData('text'),
-      file = {};
+      file;
 
     if (data) {
       file = JSON.parse(data);
+      var date = file.lastModifiedDate;
+      file.lastModifiedDate = new Date(date);
     } else {
       file = dt.files[0];
       file = this._prepareObjectFromDesktop(file);
-    }
+   }
     if (file) {
-      var isAdded = this.fileCollection.addFile(file);
+    var isAdded = this.fileCollection.addFile(file);
       this._renderResultOfAddFile(isAdded);
     } else {
       alert('error');
@@ -119,14 +120,15 @@
     e.stopPropagation();
     var hover = this.hover,
       el = this.el;
-    hover.style.width = el.offsetWidth + 'px';
-    hover.style.height = el.offsetHeight + 'px';
+    var rect = el.getBoundingClientRect();
+    hover.style.width = rect.width + 'px';
+    hover.style.height = rect.height + 'px';
     hover.style.display = 'inline';
   };
 
-  Widget.prototype._clickFooterEvent = function(){
-    var i = this.el.getElementsByTagName('input')[0];
-    i.click();
+  Widget.prototype._clickFooterEvent = function () {
+    var input = this.el.getElementsByTagName('input')[0];
+    input.click();
   };
 
   Widget.prototype._inputFileEvent = function (e) {
@@ -143,7 +145,7 @@
    * Another workaround to clear input type:file
    * @private
    */
-  Widget.prototype._createAnotherInput = function(){
+  Widget.prototype._createAnotherInput = function () {
     var i = this.el.getElementsByTagName('input')[0],
       clone = i.cloneNode(true);
     clone.addEventListener('change', this._inputFileEvent.bind(this), false);
@@ -154,12 +156,12 @@
     var object = {
       name: file.name,
       size: file.size,
-      lastModifiedDate: file.lastModifiedDate.getTime()
+      lastModifiedDate: file.lastModifiedDate
     };
     return object;
   };
 
-  Widget.prototype._renderResultOfAddFile = function(isAdded){
+  Widget.prototype._renderResultOfAddFile = function (isAdded) {
     if (isAdded) {
       this._rerender();
     } else {
@@ -180,12 +182,6 @@
       footer.parentNode.insertBefore(view.render().el, footer);
     });
   };
-
-
-
-
-
-
 
 
   /**

@@ -15,11 +15,16 @@
   };
 
   File.prototype.toJSON = function () {
-    return this.attributes;
+    var object = {
+      name: this.attributes.name,
+      size: this.attributes.size,
+      lastModifiedDate: this.attributes.lastModifiedDate
+    }
+    return object;
   };
 
   File.equals = function (fObj, sObj) {
-    return JSON.stringify(fObj) === JSON.stringify(sObj);
+    return (JSON.stringify(fObj) === JSON.stringify(sObj));
   };
 
 
@@ -29,7 +34,6 @@
       files.forEach(function (elem) {
         var file = new File(elem);
         file.collection = this;
-        console.log(file);
         this.files.push(file);
       }, this);
     }
@@ -52,7 +56,7 @@
   };
 
   FileCollection.prototype.contains = function (file) {
-    this.files.some(function (elem) {
+    return this.files.some(function (elem) {
       return File.equals(file, elem);
     })
   };

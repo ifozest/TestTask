@@ -5,7 +5,7 @@
 .hover {
     position:absolute;
     z-index:99;
-    /*display:none;*/
+    display:none;
 }
 
 .sortAsc:after {

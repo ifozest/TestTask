@@ -39,6 +39,8 @@
     };
     hover.addEventListener('dragleave', handleDragLeaveEvent, false);
 
+    var json = this.file.toJSON();
+    json.lastModifiedDate = json.lastModifiedDate.getTime();
     e.dataTransfer.setData('text', JSON.stringify(this.file));
   };
 
