@@ -75,9 +75,7 @@
     input.setAttribute('type', 'file');
     input.style.display = 'none';
 
-    tr.addEventListener('click', function () {
-      input.click();
-    }, false);
+    tr.addEventListener('click', this._clickFooterEvent().bind(this), false);
     input.addEventListener('change', this._inputFileEvent.bind(this), false);
 
     tr.appendChild(input);
@@ -126,6 +124,10 @@
     hover.style.display = 'inline';
   };
 
+  Widget.prototype._clickFooterEvent = function(){
+    var i = this.el.getElementsByTagName('input')[0];
+    i.click();
+  };
 
   Widget.prototype._inputFileEvent = function (e) {
     var file = e.target.files[0];
@@ -134,13 +136,25 @@
       var isAdded = this.fileCollection.addFile(file);
       this._renderResultOfAddFile(isAdded);
     }
+    this._createAnotherInput();
   };
+
+  /**
+   * Another workaround to clear input type:file
+   * @private
+   */
+  Widget.prototype._createAnotherInput = function(){
+    var i = this.el.getElementsByTagName('input')[0],
+      clone = i.cloneNode(true);
+    clone.addEventListener('change', this._inputFileEvent.bind(this), false);
+    i.parentNode.replaceChild(clone, i);
+  }
 
   Widget.prototype._prepareObjectFromDesktop = function (file) {
     var object = {
       name: file.name,
       size: file.size,
-      lastModifiedDate: file.lastModifiedDate
+      lastModifiedDate: file.lastModifiedDate.getTime()
     };
     return object;
   };
