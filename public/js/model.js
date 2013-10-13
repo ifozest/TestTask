@@ -18,6 +18,10 @@
     return this.attributes;
   };
 
+  File.equals = function (fObj, sObj) {
+    return JSON.stringify(fObj) === JSON.stringify(sObj);
+  };
+
 
   var FileCollection = function (files) {
     this.files = [];
@@ -32,10 +36,25 @@
     this.sorted = UNSORTED;
   };
 
-  FileCollection.prototype.addFile = function (file) {
+  FileCollection.prototype._addFile = function (file) {
     var file = new File(file);
     file.collection = this;
     this.files.push(file);
+  };
+
+  FileCollection.prototype.addFile = function (file) {
+    if (!this.contains(file)) {
+      this._addFile(file);
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  FileCollection.prototype.contains = function (file) {
+    this.files.some(function (elem) {
+      return File.equals(file, elem);
+    })
   };
 
   /**
@@ -46,7 +65,7 @@
 
     var sorted = this.sorted;
     console.log(this.sorted);
-    if (!sorted || sorted!==SORTED_BY_NAME_ASC){
+    if (!sorted || sorted !== SORTED_BY_NAME_ASC) {
       console.log(this.files);
       this.files.sort(function (a, b) {
         var fSize = a.attributes.size;
@@ -55,7 +74,7 @@
       });
       this.sorted = SORTED_BY_NAME_ASC;
 
-    } else if (sorted === SORTED_BY_NAME_ASC){
+    } else if (sorted === SORTED_BY_NAME_ASC) {
       console.log(this.files);
       this.files.reverse();
       this.sorted = SORTED_BY_NAME_DESC;

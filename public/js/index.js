@@ -5,86 +5,6 @@
     this.fileCollection.widget = this;
   };
 
-  Widget.prototype.dropEvent = function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    this.hover.style.display = 'none';
-
-    var dt = e.dataTransfer;
-    var data = dt.getData('text');
-    if (data) {
-      var json = JSON.parse(data);
-      if (!this.fileCollection.files.some(function (element) {
-        return element.attributes.data === json.data;
-      })) {
-        this.fileCollection.addFile(json);
-        this._rerender();
-      } else {
-        alert('error');
-      }
-
-    } else {
-      var file = dt.files[0];
-
-      var reader = new FileReader();
-      reader.addEventListener('loadend', function (event) {
-        var data = event.target.result;
-        if (!this.fileCollection.files.some(function (element) {
-          return element.attributes.data === data;
-        })) {
-          file.data = data;
-          this.fileCollection.addFile(file);
-          this._rerender();
-        } else {
-          alert('error');
-        }
-      }.bind(this), false);
-      reader.readAsDataURL(file);
-    }
-
-
-  };
-
-  Widget.prototype.dragOver = function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    var hover = this.hover,
-      el = this.el;
-    hover.style.width = el.offsetWidth + 'px';
-    hover.style.height = el.offsetHeight + 'px';
-    hover.style.display = 'inline';
-  };
-
-  Widget.prototype.dragLeave = function (e) {
-    this.hover.style.display = 'none';
-    console.log('leave');
-  };
-
-
-  Widget.prototype.addFile = function (file) {
-    console.log(file);
-  };
-
-  Widget.prototype.sortByName = function (e) {
-    var classList = e.target.classList;
-    classList.add('sortDesc');
-    this.fileCollection.sortBySize();
-    this._rerender();
-    console.log(this);
-  };
-
-
-  /**
-   * Serialize data from widget
-   * @returns {Array}
-   */
-  Widget.prototype.serialize = function () {
-    var serializedData = [];
-    this.files.forEach(function (elem) {
-      serializedData.push(elem.toJSON());
-    });
-    return serializedData;
-  };
 
   /**
    * Render
@@ -110,10 +30,9 @@
     this._renderFooter(tbody);
     fragment.appendChild(table);
 
-
-    this.hover.addEventListener('drop', this.dropEvent.bind(this), false);
-    this.hover.addEventListener('dragleave', this.dragLeave.bind(this), false);
-    table.addEventListener('dragover', this.dragOver.bind(this), false);
+    this.hover.addEventListener('drop', this._dropEvent.bind(this), false);
+    this.hover.addEventListener('dragleave', this._dragLeave.bind(this), false);
+    table.addEventListener('dragover', this._dragOver.bind(this), false);
 
     this.el = table;
 
@@ -130,19 +49,15 @@
       dateTh = document.createElement('th');
 
     hover.className = 'hover';
-    nameTh.appendChild(this.hover);
-    this.hover = hover;
     nameTh.innerHTML = 'Name';
-
-
     sizeTh.innerHTML = 'Size';
-    sizeTh.className = 'size';
     dateTh.innerHTML = 'Date Modified';
 
     tr.appendChild(nameTh);
     tr.appendChild(sizeTh);
     tr.appendChild(dateTh);
-
+    nameTh.appendChild(hover);
+    this.hover = hover;
     tbody.appendChild(tr);
 
   };
@@ -160,21 +75,84 @@
     input.setAttribute('type', 'file');
     input.style.display = 'none';
 
-    tr.addEventListener('click', function (e) {
+    tr.addEventListener('click', function () {
       input.click();
     }, false);
-
-    //TODO the same as file reader upstair
-    input.addEventListener('change', function (e) {
-      console.log(this.value);
-      console.log(e);
-    }, false);
-
+    input.addEventListener('change', this._inputFileEvent.bind(this), false);
 
     tr.appendChild(input);
-
     tbody.appendChild(tr);
   };
+
+  Widget.prototype._dropEvent = function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.hover.style.display = 'none';
+    var dt = e.dataTransfer,
+      data = dt.getData('text'),
+      file = {};
+
+    if (data) {
+      file = JSON.parse(data);
+    } else {
+      file = dt.files[0];
+      file = this._prepareObjectFromDesktop(file);
+    }
+    if (file) {
+      var isAdded = this.fileCollection.addFile(file);
+      this._renderResultOfAddFile(isAdded);
+    } else {
+      alert('error');
+    }
+  };
+
+
+  Widget.prototype._dragLeave = function (e) {
+    this.hover.style.display = 'none';
+  };
+
+  /**
+   * Workaround of html dragleave event
+   * @param e
+   * @private
+   */
+  Widget.prototype._dragOver = function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var hover = this.hover,
+      el = this.el;
+    hover.style.width = el.offsetWidth + 'px';
+    hover.style.height = el.offsetHeight + 'px';
+    hover.style.display = 'inline';
+  };
+
+
+  Widget.prototype._inputFileEvent = function (e) {
+    var file = e.target.files[0];
+    if (file) {
+      file = this._prepareObjectFromDesktop(file);
+      var isAdded = this.fileCollection.addFile(file);
+      this._renderResultOfAddFile(isAdded);
+    }
+  };
+
+  Widget.prototype._prepareObjectFromDesktop = function (file) {
+    var object = {
+      name: file.name,
+      size: file.size,
+      lastModifiedDate: file.lastModifiedDate
+    };
+    return object;
+  };
+
+  Widget.prototype._renderResultOfAddFile = function(isAdded){
+    if (isAdded) {
+      this._rerender();
+    } else {
+      alert('duplicate');
+    }
+  };
+
 
   Widget.prototype._rerender = function () {
     var elements = this.el.getElementsByClassName('fileView'),
@@ -182,14 +160,18 @@
     while (element = elements[0]) {
       element.parentNode.removeChild(element);
     }
-
-
     var footer = this.el.getElementsByClassName('widgetFooter')[0];
     this.fileCollection.files.forEach(function (elem) {
       var view = new Views.FileView(elem);
       footer.parentNode.insertBefore(view.render().el, footer);
     });
   };
+
+
+
+
+
+
 
 
   /**
