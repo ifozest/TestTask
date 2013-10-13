@@ -1,0 +1,17 @@
+.fileView{
+    cursor: move;
+}
+
+.hover {
+    position:absolute;
+    z-index:99;
+    /*display:none;*/
+}
+
+.sortAsc:after {
+    content: ' \25BC';   /* ▼  */
+}
+
+.sortDesc:after {
+    content: ' \25B2';   /* ▲  */
+}
