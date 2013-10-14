@@ -44,7 +44,7 @@
     this.hover.addEventListener('dragleave', this._dragLeave.bind(this), false);
     table.addEventListener('dragover', this._dragOver.bind(this), false);
     this.el = table;
-    this._renderSortMarkers();
+//    this._renderSortMarkers();
     return this;
   };
 
@@ -219,41 +219,41 @@
     var footer = this.el.getElementsByClassName('widgetFooter')[0];
     var fileList = this._renderListOfFiles();
     footer.parentNode.insertBefore(fileList, footer);
-    this._renderSortMarkers();
+//    this._renderSortMarkers();
 
   };
 
-  FileWidget.prototype._renderSortMarkers = function () {
-    var sorted = this.fileCollection.sorted;
-    this._removeSortMarkers();
+//  FileWidget.prototype._renderSortMarkers = function () {
+//    var sorted = this.fileCollection.sorted;
+//    this._removeSortMarkers();
+//
+//    var element;
+//    var className;
+//    if (sorted) {
+//      if (sorted[0] === '-') {
+//        className = 'sortDesc';
+//        sorted = sorted.substr(1);
+//      } else {
+//        className = 'sortAsc';
+//      }
+//      element = this.el.getElementsByClassName(sorted)[0];
+//      element.classList.add(className);
+//    }
+//  };
 
-    var element;
-    var className;
-    if (sorted) {
-      if (sorted[0] === '-') {
-        className = 'sortDesc';
-        sorted = sorted.substr(1);
-      } else {
-        className = 'sortAsc';
-      }
-      element = this.el.getElementsByClassName(sorted)[0];
-      element.classList.add(className);
-    }
-  };
-
-  FileWidget.prototype._removeSortMarkers = function () {
-    this._removeClassName('sortAsc');
-    this._removeClassName('sortDesc');
-  };
-
-  FileWidget.prototype._removeClassName = function (className) {
-    var elements = this.el.getElementsByClassName(className),
-      element = elements[0];
-    while (element) {
-      element.classList.remove(className);
-      element = elements[0];
-    }
-  };
+//  FileWidget.prototype._removeSortMarkers = function () {
+//    this._removeClassName('sortAsc');
+//    this._removeClassName('sortDesc');
+//  };
+//
+//  FileWidget.prototype._removeClassName = function (className) {
+//    var elements = this.el.getElementsByClassName(className),
+//      element = elements[0];
+//    while (element) {
+//      element.classList.remove(className);
+//      element = elements[0];
+//    }
+//  };
 
   Views.FileWidget = FileWidget;
 
