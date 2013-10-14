@@ -1,4 +1,4 @@
-(function (MyM) {
+(function () {
 
   var FileView = function (file) {
     this.file = file;
@@ -48,7 +48,8 @@
     var dragLeaveListener = function (e) {
       e.preventDefault();
       e.stopPropagation();
-      self.removeAndDestroy();
+      self.removeFileFromWidget();
+      self.removeView();
       hover.removeEventListener('dragleave', dragLeaveListener, false);
     };
     hover.addEventListener('dragleave', dragLeaveListener, false);
@@ -61,16 +62,18 @@
   /**
    * Remove element from collection and from view
    */
-  FileView.prototype.removeAndDestroy = function () {
-    var el = this.el,
-      files = this.file.collection.files,
+  FileView.prototype.removeFileFromWidget = function () {
+    var files = this.file.collection.files,
       index = files.indexOf(this.file);
     files.splice(index, 1);
-    el.parentNode.removeChild(el);
   };
 
+  FileView.prototype.removeView = function () {
+    var el = this.el;
+    el.parentNode.removeChild(el);
+  };
 
   var root = window;
   root.MyV = {};
   root.MyV.FileView = FileView;
-})(window.MyM);
+})();

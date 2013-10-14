@@ -2,13 +2,7 @@
 
   var root = window;
 
-  var UNSORTED = 0,
-    SORTED_BY_NAME_ASC = 1,
-    SORTED_BY_SIZE_ASC = 2,
-    SORTED_BY_DATE_ASC = 3,
-    SORTED_BY_NAME_DESC = -1,
-    SORTED_BY_SIZE_DESC = -2,
-    SORTED_BY_DATE_DESC = -3;
+  var SORTED_BY_NAME = 'name';
 
   var File = function (attrs) {
     this.attributes = attrs || {};
@@ -19,14 +13,13 @@
       name: this.attributes.name,
       size: this.attributes.size,
       lastModifiedDate: this.attributes.lastModifiedDate
-    }
+    };
     return object;
   };
 
   File.equals = function (fObj, sObj) {
     return (JSON.stringify(fObj) === JSON.stringify(sObj));
   };
-
 
   var FileCollection = function (files) {
     this.files = [];
@@ -37,13 +30,14 @@
         this.files.push(file);
       }, this);
     }
-    this.sorted = UNSORTED;
+    this.sorted = SORTED_BY_NAME;
   };
 
-  FileCollection.prototype._addFile = function (file) {
-    var file = new File(file);
+  FileCollection.prototype._addFile = function (object) {
+    var file = new File(object);
     file.collection = this;
     this.files.push(file);
+    this.files.sort(this.dynamicSort(this.sorted));
   };
 
   FileCollection.prototype.addFile = function (file) {
@@ -58,31 +52,33 @@
   FileCollection.prototype.contains = function (file) {
     return this.files.some(function (elem) {
       return File.equals(file, elem);
-    })
+    });
   };
 
-  /**
-   *  TODO rewrite this!
-   * @param file
-   */
-  FileCollection.prototype.sortBySize = function () {
+  FileCollection.prototype.sort = function (property) {
 
-    var sorted = this.sorted;
-    console.log(this.sorted);
-    if (!sorted || sorted !== SORTED_BY_NAME_ASC) {
-      console.log(this.files);
-      this.files.sort(function (a, b) {
-        var fSize = a.attributes.size;
-        var sSize = b.attributes.size;
-        return fSize - sSize;
-      });
-      this.sorted = SORTED_BY_NAME_ASC;
-
-    } else if (sorted === SORTED_BY_NAME_ASC) {
-      console.log(this.files);
-      this.files.reverse();
-      this.sorted = SORTED_BY_NAME_DESC;
+    var sortBy = property;
+    if (this.sorted === property) {
+      sortBy = '-' + property;
+      this.files.sort(this.dynamicSort(sortBy));
+    } else {
+      this.files.sort(this.dynamicSort(sortBy));
     }
+    this.sorted = sortBy;
+  };
+
+  FileCollection.prototype.dynamicSort = function (property) {
+    var sortOrder = 1;
+    if (property[0] === '-') {
+      sortOrder = -1;
+      property = property.substr(1);
+    }
+    return function (a, b) {
+      var f = a.attributes[property],
+        s = b.attributes[property];
+      var result = (f < s) ? -1 : (f > s) ? 1 : 0;
+      return result * sortOrder;
+    };
   };
 
   root.MyM = {};
