@@ -2,6 +2,7 @@
 
   var FileView = function (file) {
     this.file = file;
+    this._createImage();
   };
 
   FileView.prototype.render = function () {
@@ -31,9 +32,8 @@
 
     this._handleDragLeaveEvent();
     e.dataTransfer.dropEffect = 'copy';
-    var json = this.file.toJSON();
-    json.lastModifiedDate = json.lastModifiedDate.getTime();
     e.dataTransfer.setData('text', JSON.stringify(this.file));
+    e.dataTransfer.setDragImage(this.image, 10, 10);
   };
 
   /**
@@ -74,6 +74,16 @@
   FileView.prototype.removeView = function () {
     var el = this.el;
     el.parentNode.removeChild(el);
+  };
+
+  /**
+   * Image that shows on drag event
+   * @private
+   */
+  FileView.prototype._createImage = function() {
+    var dragIcon = document.createElement('img');
+    dragIcon.src = 'img/file.png';
+    this.image = dragIcon;
   };
 
   var root = window;
