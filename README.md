@@ -1,0 +1,1 @@
+drag'n'drop file widget
