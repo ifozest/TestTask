@@ -6,7 +6,6 @@
 
   /**
    * File widget, user can drop files from desktop, from another widget
-   * @param elements
    * @constructor
    */
   var FileWidget = function () {
@@ -182,12 +181,11 @@
   };
 
   FileWidget.prototype._prepareObjectFromDesktop = function (file) {
-    var object = {
+    return {
       name: file.name,
       size: file.size,
       lastModifiedDate: file.lastModifiedDate
     };
-    return object;
   };
 
   FileWidget.prototype._renderListOfFiles = function () {
