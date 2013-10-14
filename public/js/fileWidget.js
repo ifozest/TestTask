@@ -5,7 +5,7 @@
     SORTED_BY_DATE = 'lastModifiedDate';
 
   /**
-   * File widget
+   * File widget, user can drop files from desktop, from another widget
    * @param elements
    * @constructor
    */
