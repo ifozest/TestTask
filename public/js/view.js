@@ -21,27 +21,41 @@
     tr.appendChild(sizeTd);
     tr.appendChild(dateTd);
 
-   tr.addEventListener('dragstart', this.dragStart.bind(this), false);
+    tr.addEventListener('dragstart', this._dragStart.bind(this), false);
     this.el = tr;
 
     return this;
   };
 
-  FileView.prototype.dragStart = function (e) {
-    var self = this,
-     hover  = this.file.collection.widget.hover;
+  FileView.prototype._dragStart = function (e) {
 
-    var handleDragLeaveEvent = function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      self.removeAndDestroy();
-      this.removeEventListener('dragleave', handleDragLeaveEvent, false);
-    };
-    hover.addEventListener('dragleave', handleDragLeaveEvent, false);
+    this._handleDragLeaveEvent();
 
     var json = this.file.toJSON();
     json.lastModifiedDate = json.lastModifiedDate.getTime();
     e.dataTransfer.setData('text', JSON.stringify(this.file));
+  };
+
+  /**
+   * Handle drag leave event out of widget
+   * Workaround
+   * @private
+   */
+  FileView.prototype._handleDragLeaveEvent = function () {
+    var self = this,
+      hover = this.file.collection.widget.hover;
+
+    var dragLeaveListener = function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      self.removeAndDestroy();
+      hover.removeEventListener('dragleave', dragLeaveListener, false);
+    };
+    hover.addEventListener('dragleave', dragLeaveListener, false);
+
+    hover.addEventListener('drop', function () {
+      hover.removeEventListener('dragleave', dragLeaveListener, false);
+    }, false);
   };
 
   /**
@@ -54,7 +68,6 @@
     files.splice(index, 1);
     el.parentNode.removeChild(el);
   };
-
 
 
   var root = window;
