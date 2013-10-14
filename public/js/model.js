@@ -17,6 +17,10 @@
     return object;
   };
 
+  /**
+   * Not equals, just check that files are the similar
+   * @returns {boolean}
+   */
   File.equals = function (fObj, sObj) {
     return (JSON.stringify(fObj) === JSON.stringify(sObj));
   };
@@ -40,6 +44,11 @@
     this.files.sort(this.dynamicSort(this.sorted));
   };
 
+  /**
+   * Add file into collection
+   * @param file
+   * @returns {boolean} return false if collection contains the same object
+   */
   FileCollection.prototype.addFile = function (file) {
     if (!this.contains(file)) {
       this._addFile(file);
@@ -49,6 +58,11 @@
     }
   };
 
+  /**
+   * Check is collection contains the same object
+   * @param file
+   * @returns {*}
+   */
   FileCollection.prototype.contains = function (file) {
     return this.files.some(function (elem) {
       return File.equals(file, elem);

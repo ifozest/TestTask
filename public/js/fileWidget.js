@@ -97,6 +97,11 @@
     tbody.appendChild(tr);
   };
 
+  /**
+   * Fires on drop event, add object into collection
+   * @param e
+   * @private
+   */
   FileWidget.prototype._dropEvent = function (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -194,7 +199,10 @@
     }
   };
 
-
+  /**
+   * re render path of widget which shows file list
+   * @private
+   */
   FileWidget.prototype._reRender = function () {
     var elements = this.el.getElementsByClassName('fileView'),
       element = elements[0];

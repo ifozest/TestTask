@@ -30,7 +30,7 @@
   FileView.prototype._dragStart = function (e) {
 
     this._handleDragLeaveEvent();
-
+    e.dataTransfer.dropEffect = 'copy';
     var json = this.file.toJSON();
     json.lastModifiedDate = json.lastModifiedDate.getTime();
     e.dataTransfer.setData('text', JSON.stringify(this.file));
@@ -68,6 +68,9 @@
     files.splice(index, 1);
   };
 
+  /**
+   * Remove file view from page
+   */
   FileView.prototype.removeView = function () {
     var el = this.el;
     el.parentNode.removeChild(el);
