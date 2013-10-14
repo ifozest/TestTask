@@ -9,12 +9,11 @@
   };
 
   File.prototype.toJSON = function () {
-    var object = {
+    return {
       name: this.attributes.name,
       size: this.attributes.size,
       lastModifiedDate: this.attributes.lastModifiedDate
     };
-    return object;
   };
 
   /**
@@ -26,8 +25,7 @@
   };
 
   /**
-   *
-   * @param files
+   * File collection, store files
    * @constructor
    */
   var FileCollection = function () {
