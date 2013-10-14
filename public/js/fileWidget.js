@@ -13,7 +13,7 @@
     this.fileCollection.widget = this;
   };
 
-  FileWidget.prototype.serialize = function(){
+  FileWidget.prototype.serialize = function () {
     return this.fileCollection.serialize();
   };
 
@@ -123,7 +123,9 @@
       file.lastModifiedDate = new Date(date);
     } else {
       file = dt.files[0];
-      file = this._prepareObjectFromDesktop(file);
+      if (file) {
+        file = this._prepareObjectFromDesktop(file);
+      }
     }
     if (file) {
       var isAdded = this.fileCollection.addFile(file);
