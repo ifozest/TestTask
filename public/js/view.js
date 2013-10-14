@@ -32,7 +32,7 @@
 
     this._handleDragLeaveEvent();
     e.dataTransfer.dropEffect = 'copy';
-    e.dataTransfer.setData('text', JSON.stringify(this.file));
+    e.dataTransfer.setData('application/json', JSON.stringify(this.file));
     e.dataTransfer.setDragImage(this.image, 10, 10);
   };
 

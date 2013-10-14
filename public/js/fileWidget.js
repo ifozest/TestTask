@@ -114,7 +114,7 @@
     e.stopPropagation();
     this.hover.style.display = 'none';
     var dt = e.dataTransfer,
-      data = dt.getData('text'),
+      data = dt.getData('application/json'),
       file;
 
     if (data) {
