@@ -1,2 +1,3 @@
 *.iml
 public/vendor
+node_modules/

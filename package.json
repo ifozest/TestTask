@@ -1,0 +1,9 @@
+{
+  "name": "test-task",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "grunt": "0.4.x",
+    "grunt-contrib-jshint": "0.6.x"
+  }
+}

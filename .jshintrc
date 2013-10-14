@@ -1,0 +1,20 @@
+{
+  "camelcase": true,
+  "curly": true,
+  "eqeqeq": true,
+  "immed": true,
+  "indent": 2,
+  "latedef": true,
+  "newcap": true,
+  "noarg": true,
+  "nonew": true,
+  "quotmark": true,
+  "sub": true,
+  "unused": true,
+  "maxparams": 10,
+  "boss": true,
+  "eqnull": true,
+  "browser": true,
+  "laxcomma": true,
+  "globals": {}
+}
