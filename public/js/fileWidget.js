@@ -4,10 +4,18 @@
     SORTED_BY_SIZE = 'size',
     SORTED_BY_DATE = 'lastModifiedDate';
 
-
-  var FileWidget = function (elements) {
-    this.fileCollection = new Models.FileCollection(elements);
+  /**
+   * File widget
+   * @param elements
+   * @constructor
+   */
+  var FileWidget = function () {
+    this.fileCollection = new Models.FileCollection(arguments[0]);
     this.fileCollection.widget = this;
+  };
+
+  FileWidget.prototype.serialize = function(){
+    return this.fileCollection.serialize();
   };
 
   /**

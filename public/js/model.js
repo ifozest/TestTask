@@ -25,7 +25,13 @@
     return (JSON.stringify(fObj) === JSON.stringify(sObj));
   };
 
-  var FileCollection = function (files) {
+  /**
+   *
+   * @param files
+   * @constructor
+   */
+  var FileCollection = function () {
+    var files = arguments[0];
     this.files = [];
     if (Array.isArray(files) && files.length > 0) {
       files.forEach(function (elem) {
@@ -35,12 +41,17 @@
       }, this);
     }
     this.sorted = SORTED_BY_NAME;
+    this._selfSort();
   };
 
   FileCollection.prototype._addFile = function (object) {
     var file = new File(object);
     file.collection = this;
     this.files.push(file);
+    this._selfSort();
+  };
+
+  FileCollection.prototype._selfSort = function(){
     this.files.sort(this.dynamicSort(this.sorted));
   };
 
@@ -93,6 +104,17 @@
       var result = (f < s) ? -1 : (f > s) ? 1 : 0;
       return result * sortOrder;
     };
+  };
+
+
+  /**
+   * Serialize collection
+   * @returns {*}
+   */
+  FileCollection.prototype.serialize = function (){
+    return this.files.map(function (file) {
+      return file.toJSON();
+    });
   };
 
   root.MyM = {};
